@@ -22,5 +22,6 @@ if __name__ == '__main__':
         # Infinite loop
         while True:
             screenshot = np.array(sct.grab(monitor))
+            # screenshot = cv2.resize(screenshot)  # Resize to 420x420, experiment strategies not to add too much distortion to the original non-squared images
             cv2.imwrite(os.path.join(dataset_folder, "{}_{}.png".format(timestr, i)), screenshot)
             i += 1
