@@ -42,7 +42,7 @@ original_height = 1080
 # Fine-tuning factor for vertical positioning
 def get_fine_tune_factor(screen_height):
     if screen_height < original_height:
-        return 0.96  # manual tuned
+        return 0.96  # manually tuned
     return 1.0  # No adjustment for 1920x1080
 
 
@@ -150,7 +150,6 @@ class TransparentOverlay(QWidget):
         self.startTimerSignal.connect(self.start_timer)
         self.resetTimerSignal.connect(self.reset_timer)
 
-        # Append this instance to the list of instances
         TransparentOverlay.instances.append(self)
 
     def create_image_label(self, pixmap):
@@ -196,7 +195,7 @@ class TransparentOverlay(QWidget):
     def update_timer(self):
         self.time_left -= 1
         self.timer_label.setText(str(self.time_left))
-        self.set_timer_color()  # Call the method to update color
+        self.set_timer_color() 
 
         if self.time_left <= 0 or len(self.image_labels) == 3:
             self.timer.stop()
