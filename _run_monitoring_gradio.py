@@ -4,8 +4,8 @@ import time
 
 import gradio as gr
 
-from dbd.AI_model import AI_model
-from dbd.utils.directkeys import PressKey, ReleaseKey, SPACE
+from survivor.autoSkillCheck.AI_model import AI_model
+from utils.directkeys import PressKey, ReleaseKey, SPACE
 
 
 def monitor(onnx_ai_model, device, debug_option):
