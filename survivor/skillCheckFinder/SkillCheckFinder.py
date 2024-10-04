@@ -1,33 +1,18 @@
 import os
 import cv2
 
+from utils.TemplateFinder import TemplateFinder
 
-class SkillCheckFinder:
+
+class SkillCheckFinder(TemplateFinder):
     def __init__(self):
-        current_folder = os.path.dirname(os.path.abspath(__file__))
-        self.template = cv2.imread(os.path.join(current_folder, "template.png"), cv2.IMREAD_GRAYSCALE)
-        # self.template = self.template[70:220, 90:230]
-
-    def find_skill_check(self, frame_grayscale, threshold=0.4):
-        # convert frame to grayscale
-        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # RGB ?
-
-        # Template matching
-        res = cv2.matchTemplate(frame_grayscale, self.template, cv2.TM_CCOEFF_NORMED)
-        _, max_val, _, max_loc = cv2.minMaxLoc(res)
-        print(max_val)
-
-        if max_val > threshold:
-            w, h = self.template.shape
-            top_left = max_loc
-            bottom_right = (top_left[0] + w, top_left[1] + h)
-            return top_left, bottom_right
-        else:
-            return None
+        template_filepath = os.path.join("survivor", "skillCheckFinder", "template.png")
+        assert os.path.exists(template_filepath)
+        super().__init__(template_filepath)
 
 
 if __name__ == "__main__":
-    frame_test = cv2.imread("test.png", cv2.IMREAD_GRAYSCALE)
+    frame_test = cv2.imread(os.path.join("survivor", "skillCheckFinder", "test.png"), cv2.IMREAD_GRAYSCALE)
 
     skillCheckFinder = SkillCheckFinder()
     location = skillCheckFinder.find_skill_check(frame_test)
