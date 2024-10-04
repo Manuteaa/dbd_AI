@@ -1,8 +1,9 @@
 import mss
 import numpy as np
 import onnxruntime
-import pyautogui
 from PIL import Image
+
+from utils.frame_grabber import get_monitor_attributes, get_monitor_attributes_entire_screen
 
 
 class AI_model:
@@ -37,23 +38,12 @@ class AI_model:
         self.input_name = self.ort_session.get_inputs()[0].name
 
         self.mss = mss.mss()
-        self.monitor = self._get_monitor_attributes()
+        self.monitor = get_monitor_attributes(224)
 
     def is_using_cuda(self):
         active_providers = self.ort_session.get_providers()
         is_using_cuda = "CUDAExecutionProvider" in active_providers
         return is_using_cuda
-
-    def _get_monitor_attributes(self):
-        width, height = pyautogui.size()
-        object_size = 224
-
-        monitor = {"top": height // 2 - object_size // 2,
-                   "left": width // 2 - object_size // 2,
-                   "width": object_size,
-                   "height": object_size}
-
-        return monitor
 
     def grab_screenshot(self):
         screenshot = self.mss.grab(self.monitor)

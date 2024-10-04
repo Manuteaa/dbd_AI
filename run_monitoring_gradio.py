@@ -94,6 +94,7 @@ if __name__ == "__main__":
 
     fps_info = "Number of frames per second the AI model analyses the monitored frame. Must be equal (or greater than) 60 to hit great skill checks properly. Check The GitHub FAQ for more details"
     devices = ["CPU (default)", "GPU"]
+    onnx_path = os.path.join("survivor", "autoSkillCheck", "models", "model.onnx")
 
     demo = gr.Interface(title="DBD Auto skill check",
                         description="Please refer to https://github.com/Manuteaa/dbd_autoSkillCheck",
@@ -101,7 +102,7 @@ if __name__ == "__main__":
                         submit_btn="RUN",
                         clear_btn=None,
 
-                        inputs=[gr.Dropdown(label="ONNX model filepath", choices=["model.onnx"], value="model.onnx", info="Filepath of the ONNX model (trained AI model)"),
+                        inputs=[gr.Dropdown(label="ONNX model filepath", choices=[onnx_path], value=onnx_path, info="Filepath of the ONNX model (trained AI model)"),
                                 gr.Radio(choices=devices, value=devices[0], label="Device the AI onnx model will use"),
                                 gr.Dropdown(label="Debug options", choices=debug_options, value=debug_options[0], info="Optional options for debugging or analytics")],
 
