@@ -7,8 +7,8 @@ from utils.frame_grabber import get_monitor_attributes, get_monitor_attributes_e
 
 
 class AI_model:
-    MEAN = [0.485, 0.456, 0.406]
-    STD = [0.229, 0.224, 0.225]
+    MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+    STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
     pred_dict = {0: {"desc": "None", "hit": False},
                  1: {"desc": "repair-heal (great)", "hit": True},
@@ -23,7 +23,7 @@ class AI_model:
                  10: {"desc": "wiggle (out)", "hit": False}
                  }
 
-    def __init__(self, onnx_filepath=None, use_gpu=False):
+    def __init__(self, onnx_filepath=None, use_gpu=False, monitor=None):
         if onnx_filepath is None:
             onnx_filepath = "model.onnx"
 
@@ -38,7 +38,7 @@ class AI_model:
         self.input_name = self.ort_session.get_inputs()[0].name
 
         self.mss = mss.mss()
-        self.monitor = get_monitor_attributes(224)
+        self.monitor = get_monitor_attributes(224) if monitor is None else monitor
 
     def is_using_cuda(self):
         active_providers = self.ort_session.get_providers()
@@ -53,14 +53,9 @@ class AI_model:
         return Image.frombytes("RGB", screenshot.size, screenshot.bgra, "raw", "BGRX")
 
     def pil_to_numpy(self, image_pil):
-        img = np.array(image_pil, dtype=np.float32)
-        img = img / 255.0
+        img = np.asarray(image_pil, dtype=np.float32) / 255.
         img = (img - self.MEAN) / self.STD
-
-        img = np.transpose(img, (2, 0, 1))
-        img = np.expand_dims(img, 0)
-
-        img = np.float32(img)
+        img = np.transpose(img, (2, 0, 1))[None, ...]
         return img
 
     def softmax(self, x):
