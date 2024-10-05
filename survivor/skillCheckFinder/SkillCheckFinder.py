@@ -6,7 +6,7 @@ from utils.TemplateFinder import TemplateFinder
 
 class SkillCheckFinder(TemplateFinder):
     def __init__(self):
-        template_filepath = os.path.join("survivor", "skillCheckFinder", "template.png")
+        template_filepath = os.path.join("survivor", "skillCheckFinder", "template2.png")
         assert os.path.exists(template_filepath)
         super().__init__(template_filepath)
 
