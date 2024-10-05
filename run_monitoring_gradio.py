@@ -29,8 +29,8 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
         from survivor.skillCheckFinder.SkillCheckFinder import SkillCheckFinder
         skill_check_finder = SkillCheckFinder()
 
-        from utils.frame_grabber import get_monitor_attributes_entire_screen
-        monitor = get_monitor_attributes_entire_screen()
+        from utils.frame_grabber import get_monitor_attributes
+        monitor = get_monitor_attributes(1000)
 
     # AI model
     use_gpu = (device == devices[1])
@@ -70,6 +70,7 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
             else:
                 top_left, bottom_right = location
                 image_np = skill_check_finder.crop_frame_from_location(image_np, 224, top_left, bottom_right)
+                image_np = ai_model.pil_to_numpy(image_np)
                 pred, desc, probs, should_hit = ai_model.predict(image_np)
 
         else:
