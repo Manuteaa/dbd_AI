@@ -30,7 +30,7 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
         skill_check_finder = SkillCheckFinder()
 
         from utils.frame_grabber import get_monitor_attributes
-        monitor = get_monitor_attributes(1000)
+        monitor = get_monitor_attributes(800)
 
     # AI model
     use_gpu = (device == devices[1])

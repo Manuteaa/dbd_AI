@@ -39,14 +39,14 @@ if __name__ == "__main__":
 
     # Reshape to 1000x1000 (like in monitoring script)
     height, width = frame.height, frame.width
-    crop_size = 1000
+    crop_size = 600
     center_y, center_x = height // 2, width // 2
     start_x = max(center_x - crop_size // 2, 0)
     start_y = max(center_y - crop_size // 2, 0)
     end_x = start_x + crop_size
     end_y = start_y + crop_size
     frame = frame.crop((start_x, start_y, end_x, end_y))
-    # frame.show()
+    frame.show()
 
     skillCheckFinder = SkillCheckFinder()
     frame_grayscale = skillCheckFinder.to_grayscale_array(np.asarray(frame))

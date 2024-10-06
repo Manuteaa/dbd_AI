@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 from PIL import ImageOps
 
 
@@ -10,7 +9,7 @@ class TemplateFinder:
     def find_skill_check(self, frame_grayscale, threshold=0.4):
         res = cv2.matchTemplate(frame_grayscale, self.template, cv2.TM_CCOEFF_NORMED)
         _, max_val, _, max_loc = cv2.minMaxLoc(res)
-        print(max_val)
+        # print(max_val)
 
         if max_val > threshold:
             h, w = self.template.shape
