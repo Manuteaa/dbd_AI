@@ -20,7 +20,7 @@ class SkillCheckFinder(TemplateFinder):
         new_size_y = int(image.shape[1] * self.ratio)
         return cv2.resize(image, dsize=(new_size_y, new_size_x), interpolation=cv2.INTER_AREA)
 
-    def find_skill_check(self, frame_grayscale, threshold=0.7):
+    def find_skill_check(self, frame_grayscale, threshold=0.8):
         frame_grayscale = self._resize(frame_grayscale)
 
         location = super().find_skill_check(frame_grayscale, threshold)
@@ -34,32 +34,31 @@ class SkillCheckFinder(TemplateFinder):
 
 
 if __name__ == "__main__":
-    frame_test = cv2.imread(os.path.join("survivor", "skillCheckFinder", "frame.png"), cv2.IMREAD_GRAYSCALE)
+    from PIL import Image, ImageDraw
+    frame = Image.open(os.path.join("survivor", "skillCheckFinder", "frame.png"))
 
     # Reshape to 1000x1000 (like in monitoring script)
-    height, width = frame_test.shape[:2]
+    height, width = frame.height, frame.width
     crop_size = 1000
     center_y, center_x = height // 2, width // 2
     start_x = max(center_x - crop_size // 2, 0)
     start_y = max(center_y - crop_size // 2, 0)
     end_x = start_x + crop_size
     end_y = start_y + crop_size
-    frame_test = frame_test[start_y:end_y, start_x:end_x]
-    # cv2.imshow('frame', frame_test)
-    # cv2.waitKey(0)
+    frame = frame.crop((start_x, start_y, end_x, end_y))
+    # frame.show()
 
     skillCheckFinder = SkillCheckFinder()
-    location = skillCheckFinder.find_skill_check(frame_test)
-    print(location)
+    frame_grayscale = skillCheckFinder.to_grayscale_array(np.asarray(frame))
+    location = skillCheckFinder.find_skill_check(frame_grayscale)
 
     if location is None:
         print("No skill check detected")
     else:
         top_left, bottom_right = location
-        cv2.rectangle(frame_test, top_left, bottom_right, 255, 2)
-        # cv2.imshow('skill check in frame', frame_test)
-        # cv2.waitKey(0)
+        draw = ImageDraw.Draw(frame)
+        draw.rectangle((top_left[0], top_left[1], bottom_right[0], bottom_right[1]), outline="red", width=3)
+        frame.show()
 
-        skill_check = skillCheckFinder.crop_frame_from_location(frame_test, 224, top_left, bottom_right)
-        # cv2.imshow('skill check 224x224', skill_check)
-        # cv2.waitKey(0)
+        skill_check = skillCheckFinder.crop_pil_frame_from_location(frame, 224, top_left, bottom_right)
+        skill_check.show()

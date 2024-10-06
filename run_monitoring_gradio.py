@@ -69,8 +69,8 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
                 pred, desc, probs, should_hit = 0, "None", [], False
             else:
                 top_left, bottom_right = location
-                image_np = skill_check_finder.crop_frame_from_location(image_np, 224, top_left, bottom_right)
-                image_np = ai_model.pil_to_numpy(image_np)
+                image_pil = skill_check_finder.crop_pil_frame_from_location(image_pil, 224, top_left, bottom_right)
+                image_np = ai_model.pil_to_numpy(image_pil)
                 pred, desc, probs, should_hit = ai_model.predict(image_np)
 
         else:
