@@ -128,8 +128,8 @@ if __name__ == "__main__":
     onnx_path = os.path.join("survivor", "autoSkillCheck", "models", "model.onnx")
     features = ["Skill Check detection from entire screen"]
 
-    demo = gr.Interface(title="DBD Auto skill check",
-                        description="Please refer to https://github.com/Manuteaa/dbd_autoSkillCheck",
+    demo = gr.Interface(title="DBD AI for survivors",
+                        description="Please refer to https://github.com/Manuteaa/dbd_AI",
                         fn=monitor,
                         submit_btn="RUN",
                         clear_btn=None,
