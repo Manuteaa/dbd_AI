@@ -19,6 +19,7 @@ from datetime import datetime
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
 
 
+
 def get_image_paths():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
