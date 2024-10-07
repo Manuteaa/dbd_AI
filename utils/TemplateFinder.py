@@ -1,9 +1,12 @@
+import os.path
+
 import cv2
 from PIL import ImageOps
 
 
 class TemplateFinder:
     def __init__(self, template_filepath):
+        assert os.path.exists(template_filepath)
         self.template = cv2.imread(template_filepath, cv2.IMREAD_GRAYSCALE)
 
     def find_skill_check(self, frame_grayscale, threshold=0.4):
