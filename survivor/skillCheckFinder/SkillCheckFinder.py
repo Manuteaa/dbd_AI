@@ -25,40 +25,54 @@ class SkillCheckFinder(TemplateFinder):
 
         location = super().find_skill_check(frame_grayscale, threshold)
         if location is not None:
-            location = np.array(location) / self.ratio
-            location = np.floor(location).astype(int)
-            top_left, bottom_right = location[0], location[1]
-            return top_left, bottom_right
+            center, score = location
+            center = center / self.ratio
+            center = np.floor(center).astype(int)
+            return center, score
         else:
             return None
 
 
 if __name__ == "__main__":
-    from PIL import Image, ImageDraw
-    frame = Image.open(os.path.join("survivor", "skillCheckFinder", "frame.png"))
-
-    # Reshape to 1000x1000 (like in monitoring script)
-    height, width = frame.height, frame.width
-    crop_size = 600
-    center_y, center_x = height // 2, width // 2
-    start_x = max(center_x - crop_size // 2, 0)
-    start_y = max(center_y - crop_size // 2, 0)
-    end_x = start_x + crop_size
-    end_y = start_y + crop_size
-    frame = frame.crop((start_x, start_y, end_x, end_y))
-    frame.show()
+    from glob import glob
+    from PIL import Image
+    from tqdm import tqdm
+    import random
 
     skillCheckFinder = SkillCheckFinder()
-    frame_grayscale = skillCheckFinder.to_grayscale_array(np.asarray(frame))
-    location = skillCheckFinder.find_skill_check(frame_grayscale)
+    images = glob(os.path.join("..", "dbd", "dataset", "*", "*.png"))
+    random.shuffle(images)
 
-    if location is None:
-        print("No skill check detected")
-    else:
-        top_left, bottom_right = location
-        draw = ImageDraw.Draw(frame)
-        draw.rectangle((top_left[0], top_left[1], bottom_right[0], bottom_right[1]), outline="red", width=3)
-        frame.show()
+    # from survivor.autoSkillCheck.AI_model import AI_model
+    # ai = AI_model(onnx_filepath=os.path.join("..", "dbd", "model.onnx"))
 
-        skill_check = skillCheckFinder.crop_pil_frame_from_location(frame, 224, top_left, bottom_right)
-        skill_check.show()
+    total_bin = np.full((12,), 0)
+    errors_bin = np.full((12,), 0)
+    with tqdm(total=len(images)) as pbar:
+        for image in images:
+            label = int(image.split(os.path.sep)[-2])
+            total_bin[label] += 1
+
+            frame = Image.open(image)
+            frame_grayscale = skillCheckFinder.to_grayscale_array(np.asarray(frame))
+            location = skillCheckFinder.find_skill_check(frame_grayscale)
+
+            if (location is None and label != 0) or (location is not None and label == 0):
+                errors_bin[label] += 1
+
+            # frame = skillCheckFinder.crop_pil_frame_from_location(frame, 224, location[0])
+            # frame = ai.pil_to_numpy(frame)
+            # pred, desc, probs, should_hit = ai.predict(frame)
+            # if pred != label:
+            #     errors_bin[label] += 1
+
+            pbar.set_description(str(errors_bin))
+            pbar.update()
+
+            # top_left, bottom_right = location
+            # draw = ImageDraw.Draw(frame)
+            # draw.rectangle((top_left[0], top_left[1], bottom_right[0], bottom_right[1]), outline="red", width=3)
+            # frame.show()
+            #
+            # skill_check = skillCheckFinder.crop_pil_frame_from_location(frame, 224, top_left, bottom_right)
+            # skill_check.show()

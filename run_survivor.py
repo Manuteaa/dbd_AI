@@ -30,7 +30,7 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
         skill_check_finder = SkillCheckFinder()
 
         from utils.frame_grabber import get_monitor_attributes
-        monitor = get_monitor_attributes(800)
+        monitor = get_monitor_attributes(600)
 
     # AI model
     use_gpu = (device == devices[1])
@@ -64,12 +64,12 @@ def monitor(onnx_ai_model, device, additional_features, debug_option):
             # Skill Check detection from entire screen
             image_np = np.asarray(image_pil)
             image_np_grayscale = skill_check_finder.to_grayscale_array(image_np)
-            location = skill_check_finder.find_skill_check(image_np_grayscale)
+            location = skill_check_finder.find_skill_check(image_np_grayscale, threshold=0.)
             if location is None:
                 pred, desc, probs, should_hit = 0, "None", [], False
             else:
-                top_left, bottom_right = location
-                image_pil = skill_check_finder.crop_pil_frame_from_location(image_pil, 224, top_left, bottom_right)
+                center, score = location
+                image_pil = skill_check_finder.crop_pil_frame_from_location(image_pil, 224, center)
                 image_np = ai_model.pil_to_numpy(image_pil)
                 pred, desc, probs, should_hit = ai_model.predict(image_np)
 
