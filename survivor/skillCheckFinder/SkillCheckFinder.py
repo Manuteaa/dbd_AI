@@ -16,9 +16,9 @@ class SkillCheckFinder(TemplateFinder):
         self.template = self._resize(self.template)
 
     def _resize(self, image):
-        new_size_x = int(image.shape[0] * self.ratio)
-        new_size_y = int(image.shape[1] * self.ratio)
-        return cv2.resize(image, dsize=(new_size_y, new_size_x), interpolation=cv2.INTER_AREA)
+        new_size_x = int(image.shape[1] * self.ratio)
+        new_size_y = int(image.shape[0] * self.ratio)
+        return cv2.resize(image, dsize=(new_size_x, new_size_y), interpolation=cv2.INTER_AREA)
 
     def find_skill_check(self, frame_grayscale, threshold=0.8):
         frame_grayscale = self._resize(frame_grayscale)
@@ -28,6 +28,8 @@ class SkillCheckFinder(TemplateFinder):
             center, score = location
             center = center / self.ratio
             center = np.floor(center).astype(int)
+            # Convert (y,x) to (x,y)
+            center = center[::-1]
             return center, score
         else:
             return None
